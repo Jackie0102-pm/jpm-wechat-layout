@@ -1,0 +1,25 @@
+{
+  "version": "independent-v1",
+  "checks": [
+    "完整长文：八套通过新校验；输入文字完整；正文与上一版逐字节一致",
+    "组件展示：八套通过新校验；输入文字完整；正文与上一版逐字节一致",
+    "八套图片保留/无图模式及拒绝覆盖输出均通过",
+    "Markdown直接输入及代码字符检查通过",
+    "Skill文档内部引用有效；安装入口指向当前包",
+    "三个已识别复用文件已移除，包内无其相同副本"
+  ],
+  "unitTests": "4 passed, includes 12 invalid-fragment scenarios and a Word integration fixture",
+  "wechatPaste": "未测试",
+  "legalScope": "技术去依赖记录，不是隔离开发或法律权属认证",
+  "clipboardExport": {
+    "result": {
+      "same": true,
+      "scriptFree": true,
+      "status": "正文已复制，请粘贴后检查。"
+    },
+    "method": "Browser clipboard API intercepted; no system clipboard read; editor paste not tested"
+  },
+  "skillMetadata": "YAML parsed with system Ruby; internal document links checked; bundled quick_validate unavailable because PyYAML absent",
+  "browserSummary": "16个预览分别通过320/390px无横向溢出检查；八套同组件切换通过",
+  "status": "技术独立化完成；现有安装入口已更新"
+}

@@ -1,0 +1,110 @@
+{
+  "title": "把客户反馈变成下一步产品行动",
+  "author": "排版测试",
+  "series": "产品手记",
+  "subtitle": "先保留原话，再判断问题，最后验证改动。",
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "一次访谈不等于一个需求。我们先记录**使用情境**，再区分用户遇到的问题和提出的解决办法。"
+    },
+    {
+      "type": "chapter",
+      "text": "从原话开始",
+      "label": "LISTEN"
+    },
+    {
+      "type": "quote",
+      "text": "先问发生了什么，再问希望改变什么。",
+      "attribution": "访谈提醒",
+      "emphasis": true
+    },
+    {
+      "type": "note",
+      "title": "记录规则",
+      "items": [
+        "保留原句与时间。",
+        "不要把自己的解释写成客户说过的话。"
+      ]
+    },
+    {
+      "type": "list",
+      "items": [
+        "记录触发情境",
+        "寻找阻碍",
+        "核对已有替代方案"
+      ]
+    },
+    {
+      "type": "steps",
+      "items": [
+        "记录行为",
+        "核对原话",
+        "验证改动"
+      ]
+    },
+    {
+      "type": "chapter",
+      "text": "让证据能被检查",
+      "label": "VERIFY"
+    },
+    {
+      "type": "metrics",
+      "title": "本轮访谈记录",
+      "items": [
+        {
+          "value": "12",
+          "label": "访谈场次",
+          "detail": "仅统计本轮实际完成的访谈"
+        },
+        {
+          "value": "4",
+          "label": "重复问题",
+          "detail": "由不同受访者分别提到"
+        },
+        {
+          "value": "2",
+          "label": "待验证假设",
+          "detail": "尚未形成产品结论"
+        }
+      ]
+    },
+    {
+      "type": "code",
+      "text": "result = {\"status\": \"pending\"}\nprint(result)",
+      "language": "python"
+    },
+    {
+      "type": "table",
+      "headers": [
+        "阶段",
+        "动作"
+      ],
+      "rows": [
+        [
+          "观察",
+          "记录真实行为"
+        ],
+        [
+          "验证",
+          "回访同一情境"
+        ]
+      ]
+    },
+    {
+      "type": "image",
+      "src": "layout-dot.png",
+      "alt": "测试圆点",
+      "caption": "用于检查图片是否被保留。"
+    },
+    {
+      "type": "chapter",
+      "text": "先做最小改动",
+      "label": "ACT"
+    },
+    {
+      "type": "paragraph",
+      "text": "结束之后，用同一情境验证改动是否有效。这是测试文章的最后一句。"
+    }
+  ]
+}

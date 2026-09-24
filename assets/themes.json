@@ -1,0 +1,58 @@
+[
+  {
+    "number": 1,
+    "id": "blue-grid",
+    "name": "蓝调网格",
+    "description": "蓝紫渐变、细网格、轻字重、直角分栏",
+    "scene": "专业分析、系统教程"
+  },
+  {
+    "number": 2,
+    "id": "purple-future",
+    "name": "黑紫未来",
+    "description": "黑紫撞色、粗标题、圆角块、星形标记",
+    "scene": "AI、创意观点"
+  },
+  {
+    "number": 3,
+    "id": "orange-aqua",
+    "name": "橙青映像",
+    "description": "橙青撞色、轻标题、错位分栏",
+    "scene": "品牌、营销案例"
+  },
+  {
+    "number": 4,
+    "id": "neon-notes",
+    "name": "荧光便签",
+    "description": "奶油方格、绿色粗框、黄粉便签",
+    "scene": "轻知识、清单"
+  },
+  {
+    "number": 5,
+    "id": "black-lime",
+    "name": "曜黑酸柠",
+    "description": "通篇黑底、白色轻标题、酸柠渐变",
+    "scene": "产品观点、商业提案"
+  },
+  {
+    "number": 6,
+    "id": "retro-record",
+    "name": "复古唱片",
+    "description": "黄红蓝、圆润标题、衬线正文、唱片装饰",
+    "scene": "叙事、文化、个人复盘"
+  },
+  {
+    "number": 7,
+    "id": "gray-portfolio",
+    "name": "灰阶作品集",
+    "description": "黑灰双层标题、细线目录、开放分栏",
+    "scene": "设计、作品复盘"
+  },
+  {
+    "number": 8,
+    "id": "blue-olive",
+    "name": "雾蓝橄榄",
+    "description": "米白与炭黑交替、雾蓝标题、橄榄编号",
+    "scene": "商业分析、方案复盘"
+  }
+]

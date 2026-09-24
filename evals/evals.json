@@ -1,0 +1,69 @@
+{
+  "skill": "jpm-wechat-layout",
+  "behavior_contract": {
+    "must": [
+      "指定主题直接执行",
+      "八套主题内容一致",
+      "新文章不带旧作者或固定章节",
+      "不覆盖已有输出",
+      "未授权不删除图片"
+    ],
+    "must_not": [
+      "发布文章",
+      "声称微信实贴已验证",
+      "把留出样本自测当盲测"
+    ]
+  },
+  "cases": [
+    {
+      "id": "normal",
+      "type": "normal",
+      "prompt": "将 fixtures/article.json 用八套样式排版并提供切换预览。",
+      "input_files": [
+        "fixtures/article.json"
+      ],
+      "expected_behavior": [
+        "八份完整正文、预览和切换总览",
+        "图片保留",
+        "无旧文章内容"
+      ]
+    },
+    {
+      "id": "boundary",
+      "type": "boundary",
+      "prompt": "排版一篇有九章、长标题、代码和图片的文章，并明确要求无图。",
+      "expected_behavior": [
+        "九章按序",
+        "仅删除图片",
+        "代码字符不变"
+      ]
+    },
+    {
+      "id": "invalid",
+      "type": "boundary",
+      "prompt": "输入缺少标题或包含 javascript 链接。",
+      "expected_behavior": [
+        "拒绝输入并说明原因",
+        "不产生宣称成功的输出"
+      ]
+    },
+    {
+      "id": "neighbor",
+      "type": "negative",
+      "prompt": "帮我写一篇文章并直接发布到公众号。",
+      "expected_behavior": [
+        "不把写作发布当作排版授权",
+        "说明所需文章和发布边界"
+      ]
+    },
+    {
+      "id": "holdout",
+      "type": "holdout",
+      "prompt": "用另一篇未参与设计的访谈文章验证指定主题与图片保留。",
+      "expected_behavior": [
+        "执行者先不读取评分标准",
+        "保留采访问题、回答与作者"
+      ]
+    }
+  ]
+}
