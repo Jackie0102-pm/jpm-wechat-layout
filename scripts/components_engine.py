@@ -126,7 +126,8 @@ class Components:
   if t=='conclusion':
    return self.box(self.p(b.get('label','SUMMARY'),'font-size:10px;margin-bottom:24px;')+self.p(title or '下一步','font-size:26px;line-height:1.5;margin-bottom:20px;')+self.p(txt),'margin:42px 0 0;padding:30px 24px;'+('background:'+m.GREEN+';color:'+m.INK+';border-radius:25px 25px 0 0;' if self.neon else 'background:'+m.BLUE+';color:white;border-top:1px solid '+m.LINE+';'))
   if t=='signature':
-   return self.box(self.p(b['name'],'font-size:14px;font-weight:700;')+(self.p(b['bio'],'font-size:12px;margin-top:10px;') if b.get('bio') else '')+(self.p(b['cta'],'font-size:12px;margin-top:20px;') if b.get('cta') else ''),'padding:26px 24px;border-top:1px solid '+m.LINE+';'+('background:'+m.LIME+';' if self.neon else 'background:'+m.PALE+';'))
+   from signature import signature
+   return signature(self,b)
   if t=='code':
    dark=b.get('variant','dark')=='dark';color='#F5F5EF' if dark else m.INK;bg='#222A26' if dark else m.PALE
    lines=''.join(m.plain(x or ' ','font:13px/1.7 monospace;white-space:pre-wrap;overflow-wrap:anywhere;') for x in txt.split('\n'))
@@ -141,14 +142,17 @@ def article(d,t,source_dir,out,no_images,base_article,theme_module):
   from extended_components import ExtendedComponents
   c=ExtendedComponents(m,t['id'])
  body=c.cover(d);nav=[];omitted=[];n=0
- for b in d['blocks']:
+ for i,b in enumerate(d['blocks']):
+  body+='<!-- jpm:block:'+str(i)+' -->'
   if b['type']=='chapter':
-   n+=1;nav.append(('chapter'+str(n),b['text']));m.blocks={0:('∞' if b.get('ending') and b is [x for x in d['blocks'] if x['type']=='chapter'][-1] else str(n).zfill(2)),1:'PART',2:b['text'],3:b.get('label','SECTION')+(' · '+b['subtitle'] if b.get('subtitle') else '')};cycle=((n-1)%6)+1 if t['id']=='blue-olive' else n;body+=m.chapter(0,cycle).replace('<!-- chapter'+str(cycle)+' -->','<!-- chapter'+str(n)+' -->');continue
-  custom=c.render(b)
-  if custom is not None:body+=custom;continue
-  # Reuse stable media, headings, steps and metric components without their cover.
-  sub={'title':'_','series':d.get('series',''),'blocks':[b]};clean,_,gone=base_article(sub,t,source_dir,out,no_images)
-  from render import cover
-  cover_module=theme_module(t);cover_module.BRAND_NAME=d.get('series','');old=cover(cover_module,t,sub);start=clean.find(old);assert start>=0
-  body+=clean[start+len(old):-len('</section>')];omitted+=gone
+   n+=1;nav.append(('chapter'+str(n),b['text']));m.blocks={0:('∞' if b.get('ending') and b is [x for x in d['blocks'] if x['type']=='chapter'][-1] else str(n).zfill(2)),1:'PART',2:b['text'],3:b.get('label','SECTION')+(' · '+b['subtitle'] if b.get('subtitle') else '')};cycle=((n-1)%6)+1 if t['id']=='blue-olive' else n;body+=m.chapter(0,cycle).replace('<!-- chapter'+str(cycle)+' -->','<!-- chapter'+str(n)+' -->')
+  else:
+   custom=c.render(b)
+   if custom is not None:body+=custom
+   else:
+    sub={'title':'_','series':d.get('series',''),'blocks':[b]};clean,_,gone=base_article(sub,t,source_dir,out,no_images,mark_blocks=False)
+    from render import cover
+    cover_module=theme_module(t);cover_module.BRAND_NAME=d.get('series','');old=cover(cover_module,t,sub);start=clean.find(old);assert start>=0
+    body+=clean[start+len(old):-len('</section>')];omitted+=gone
+  body+='<!-- jpm:end:'+str(i)+' -->'
  return m.sec(body,m.WRAPPER),nav,omitted

@@ -9,7 +9,7 @@
 只运行排版脚本需要 Python 3，无需安装额外的Python库：
 
 ```bash
-python3 scripts/render.py evals/fixtures/article.json --theme all --out /tmp/jpm-layout-demo
+python3 scripts/render.py evals/fixtures/article.json --source evals/fixtures/article.json --theme all --out /tmp/jpm-layout-demo
 ```
 
 输出目录必须是新目录。打开其中的排版总览.html，或单主题预览页，点击“复制到公众号”后在编辑器粘贴。Word导入才需要可选的 python-docx 1.2或更新的1.x版本，要求列在 requirements-word.txt。

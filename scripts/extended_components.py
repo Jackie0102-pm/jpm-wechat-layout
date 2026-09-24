@@ -126,7 +126,8 @@ class ExtendedComponents(Components):
   if t=='conclusion':
    return self.panel(self.p(b.get('label','SUMMARY'),'font-size:10px;margin-bottom:25px;')+self.p(title or '下一步','font-size:28px;line-height:1.45;margin-bottom:22px;')+self.p(txt),'key')
   if t=='signature':
-   return self.box(self.p(b['name'],'font-size:14px;font-weight:700;')+(self.p(b['bio'],'font-size:12px;margin-top:12px;') if b.get('bio') else '')+(self.p(b['cta'],'font-size:12px;margin-top:20px;') if b.get('cta') else ''),'margin:0 24px;padding:27px 0;border-top:1px solid '+m.LINE+';')
+   from signature import signature
+   return signature(self,b)
   if t=='code' and k=='black-lime':
    dark=b.get('variant','dark')=='dark';body=''.join(m.plain(x or ' ','font:13px/1.7 monospace;white-space:pre-wrap;overflow-wrap:anywhere;') for x in txt.split('\n'))
    return self.box((m.plain(b['language'],'font:10px/1.8 monospace;margin-bottom:15px;') if b.get('language') else '')+body,'margin:25px 22px;padding:20px;border:1px solid '+m.LINE+';border-radius:17px;background:'+('#171D12' if dark else '#F1F4EA')+';color:'+('#ECF0E5' if dark else '#18220D')+';')

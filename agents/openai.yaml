@@ -1,4 +1,4 @@
 interface:
   display_name: "jpm-wechat-layout"
   short_description: "用已确认的八套视觉风格排版文章，提供样式切换总览和公众号正文复制"
-  default_prompt: "使用 $jpm-wechat-layout，把我的文章排成选定的八套主题之一，并生成可复制的预览。"
+  default_prompt: "使用 $jpm-wechat-layout，把我的文章排成选定的八套主题之一，默认不改原文文字，仅调整视觉，核对原稿与输出并生成可复制的预览。"

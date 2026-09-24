@@ -79,10 +79,12 @@ def cover(m,t,d):
  if n==7:return m.sec(m.plain(d.get('kicker',''),'font-size:24px;color:'+m.MUTED+';line-height:1.2;margin-bottom:20px;')+inner,'padding:34px 24px;color:'+m.INK+';border-top:1px solid '+m.LINE+';border-bottom:1px solid '+m.LINE+';border-right:20px solid #F0F0ED;')
  return m.sec(m.brand()+m.sec(inner,'margin-top:43px;'),'padding:25px 24px 34px;color:'+m.BLUE+';'+m.LIGHTWAVE)
 
-def article(d,t,source_dir,out,no_images=False):
+def article(d,t,source_dir,out,no_images=False,mark_blocks=True):
  m=theme_module(t);m.BRAND_NAME=d.get('series','');content=cover(m,t,d);chapter=0;nav=[];omitted=[]
  def invoke(fn,values,*args):m.blocks=dict(enumerate(values));return getattr(m,fn)(0,*args)
- for b in d['blocks']:
+ for index,b in enumerate(d['blocks']):
+  end='<!-- jpm:end:'+str(index)+' -->' if mark_blocks else ''
+  if mark_blocks:content+='<!-- jpm:block:'+str(index)+' -->'
   typ=b['type'];txt=b.get('text','')
   if typ=='paragraph':content+=invoke('textp',[txt])
   elif typ=='heading':content+=invoke('subheading',[txt])
@@ -100,7 +102,7 @@ def article(d,t,source_dir,out,no_images=False):
    content+=invoke('rows',values,2,len(b['items']),3,True)
   elif typ=='divider':content+=m.sec('','border-top:1px solid '+m.LINE+';margin:30px 22px;')
   elif typ=='image':
-   if no_images:omitted.append(b['src']);continue
+   if no_images:omitted.append(b['src']);content+=end;continue
    src=b['src'];parsed=urlparse(src)
    if parsed.scheme not in ['https','http']:
     from urllib.parse import unquote
@@ -115,6 +117,7 @@ def article(d,t,source_dir,out,no_images=False):
   elif typ=='table':
    # Semantic table serialized into labeled rows on narrow WeChat viewports; all values preserved.
    for row in b['rows']:content+=invoke('note',[b.get('title','数据')]+[h+'：'+str(v) for h,v in zip(b['headers'],row)],len(row)+1)
+  content+=end
  clean=m.sec(content,m.WRAPPER)
  return clean,nav,omitted
 
@@ -123,9 +126,19 @@ def preview(clean,nav,title):
  template=(ROOT/'assets/preview.html').read_text();return template.replace('__DATA__',data)
 
 def main():
- p=argparse.ArgumentParser(description=__doc__);p.add_argument('input',type=Path);p.add_argument('--theme',required=True,help='1–8、中文名、主题 ID 或 all');p.add_argument('--out',type=Path,required=True);p.add_argument('--no-images',action='store_true');p.add_argument('--edition',choices=['stable','pilot','components'],default='components');a=p.parse_args()
+ p=argparse.ArgumentParser(description=__doc__);p.add_argument('input',type=Path);p.add_argument('--theme',required=True,help='1–8、中文名、主题 ID 或 all');p.add_argument('--out',type=Path,required=True);p.add_argument('--no-images',action='store_true');p.add_argument('--edition',choices=['stable','pilot','components'],default='components');p.add_argument('--source',type=Path,help='未改写的原稿Markdown或已人工核对的source.json');p.add_argument('--allow-unverified',action='store_true',help='仅试排：不提供原稿，明确标记未核对');a=p.parse_args()
  if a.out.exists():raise ValueError('输出目录已存在，请使用新目录，避免覆盖确认版')
- raw=a.input.read_text();doc=json.loads(raw) if a.input.suffix=='.json' else markdown(raw)
+ from check_content import source_doc, compare, inspect_rendered
+ raw=a.input.read_text();doc=json.loads(raw) if a.input.suffix.lower()=='.json' else source_doc(a.input)[0]
+ baseline=a.source or (a.input if a.input.suffix.lower()!='.json' else None)
+ if baseline:
+  source,kind=source_doc(baseline);content_report=compare(source,doc,baseline.parent,a.input.parent)
+  import hashlib
+  content_report.update(source_kind=kind,source_name=baseline.name,source_sha256=hashlib.sha256(baseline.read_bytes()).hexdigest())
+  if not content_report['passed']:raise ValueError('原文文字核对失败：'+json.dumps(content_report['changes'],ensure_ascii=False))
+ elif a.allow_unverified:content_report={'passed':False,'status':'未核对原稿，仅供试排'}
+ else:raise ValueError('JSON排版需要 --source 原稿.md；仅试排可显式 --allow-unverified，不能声称文字保真')
+ rendered_checks=[]
  if a.edition!='stable':
   import components_engine
   components_engine.validate(doc,check_doc)
@@ -139,9 +152,13 @@ def main():
   from check_fragment import inspect_fragment
   check=inspect_fragment(clean,base_dir=a.out)
   if check['issues']:raise ValueError(json.dumps(check,ensure_ascii=False))
+  rendered=inspect_rendered(doc,clean,a.input.parent,a.out,a.no_images)
+  if not rendered['passed']:raise ValueError('渲染文字核对失败：'+json.dumps(rendered,ensure_ascii=False))
+  rendered_checks.append({'theme':t['id'],**rendered})
   filename=t['id']+'-预览.html';(a.out/filename).write_text(preview(clean,nav,doc['title']+' / '+t['name']))
   gallery.append({**t,'url':filename,'omittedImages':omitted,'clean':clean,'nav':nav})
- (a.out/'检查记录.json').write_text(json.dumps({'edition':a.edition,'themes':[{k:v for k,v in t.items() if k not in ['clean','nav']} for t in gallery],'static':'passed','wechatPaste':'未测试'},ensure_ascii=False,indent=2))
+ (a.out/'文字核对.json').write_text(json.dumps({'source_comparison':content_report,'themes':rendered_checks},ensure_ascii=False,indent=2))
+ (a.out/'检查记录.json').write_text(json.dumps({'edition':a.edition,'themes':[{k:v for k,v in t.items() if k not in ['clean','nav']} for t in gallery],'static':'passed','content':content_report,'rendered_content':rendered_checks,'wechatPaste':'未测试'},ensure_ascii=False,indent=2))
  data=json.dumps(gallery,ensure_ascii=False).replace('</','<\\/')
  (a.out/'排版总览.html').write_text((ROOT/'assets/gallery.html').read_text().replace('__DATA__',data))
  print(str((a.out/'排版总览.html').resolve()))
